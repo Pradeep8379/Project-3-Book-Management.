@@ -1,6 +1,6 @@
 const userModel = require('../models/userModel')
 const jwt = require('jsonwebtoken');
-const { isValid, isValidEmail, isValidMobile, isValidName, isValidStreet,isValidTitle ,isValidPassword,isValidCity,isValidPincode} = require("../validation/validation");
+const { isValid, isValidEmail, isValidMobile, isValidName, isValidStreet, isValidTitle , isValidCity,isValidPincode} = require("../validation/validation");
 
 
 const createUser = async function (req, res) {
@@ -8,11 +8,8 @@ const createUser = async function (req, res) {
     try {
         let data = req.body
         //using destructuring
-        //let address = data.address;
-        //const { street, city, pincode } = address;
+        
         const { title, name, phone, email, address, password } = data;
-       
-        //data["email"] = data["email"].toLowerCase()
 
         if (Object.keys(data).length == 0) {
             return res
@@ -20,8 +17,7 @@ const createUser = async function (req, res) {
                 .send({ status: false, message: "Data is required for creating user..." })
         };
 
-
-        if (!isValidTitle(title)) {
+        if (!isValidTitle(title.trim())) {
             return res
                 .status(400)
                 .send({ status: false, message: "Please Enter Mr,Miss or Mrs..." })
@@ -45,7 +41,7 @@ const createUser = async function (req, res) {
                 .send({ status: false, message: "emailId is mandatory..." })
         };
 
-        if (!isValidEmail(email)) {
+        if (!isValidEmail(email.trim())) {
             return res
                 .status(400)
                 .send({ status: false, message: "please enter valid emailId..." })
@@ -64,22 +60,18 @@ const createUser = async function (req, res) {
                 .send({ status: false, message: "mobile number is mandatory..." })
         };
 
-        if (!isValidMobile(phone)) {
+        if (!isValidMobile(phone.trim())) {
             return res
                 .status(400)
                 .send({ status: false, message: "please enter valid mobile number..." })
         };
+
         if (!password) {
             return res
                 .status(400)
                 .send({ status: false, message: "password is mandatory..." })
         };
-        // if(!isValidPassword(password)){
-        //     return res
-        //     .status(400)
-        //     .send({ status: false, message: "invalid password..." })
-
-        // }
+       
         if(!(password.length<16) || !(password.length>7)){
             return res
             .status(400)
@@ -111,6 +103,7 @@ const createUser = async function (req, res) {
                 .status(400)
                 .send({ status: false, message: "city is mandatory..." })
         };
+
         if(!isValidCity(address.city)){
             return res
             .status(400)
@@ -122,6 +115,7 @@ const createUser = async function (req, res) {
                 .status(400)
                 .send({ status: false, message: "pincode is mandatory..." })
         };
+
         if(!isValidPincode(address.pincode)){
             return res
             .status(400)
@@ -130,7 +124,6 @@ const createUser = async function (req, res) {
        
 
         const newUser = await userModel.create(data);
-
 
         return res
             .status(201)
@@ -154,7 +147,7 @@ const userLogin = async (req, res) => {
             authorId: checkData._id.toString(),
             group: "group-7",
             
-        }, "project3",{ expiresIn: "24h"});
+        }, "project3",{ expiresIn: "1M"}); 
 
         res.status(200).send({ status: true, msg: "user Login Successful",token: { token },});
 

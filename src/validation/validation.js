@@ -60,5 +60,16 @@ const isValidPincode = function (value) {
     const regex = /^[1-9][0-9]{5}$/
     return regex.test(value)
 }
+const isValidIsbn = function (ISBN) {
+    const regex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
 
-module.exports = { isValid , isValidEmail , isValidMobile , isValidName ,  isValidStreet,isValidTitle ,isValidPassword,isValidCity,isValidPincode};
+    return regex.test(ISBN)
+}
+const isValidUserId = function(userId){
+    return mongoose.isValidObjectId(userId)
+}
+
+const isValidObjectId = function (objectId) {
+    return mongoose.isValidObjectId(objectId);
+  };
+module.exports = { isValid , isValidEmail , isValidMobile , isValidName ,  isValidStreet,isValidTitle ,isValidPassword,isValidCity,isValidPincode, isValidIsbn, isValidUserId, isValidObjectId}; 

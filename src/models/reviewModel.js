@@ -26,10 +26,10 @@ const reviewSchema = new mongoose.Schema({
     },
     review : String,
     isDeleted : {
-        type : boolean,
+        type : Boolean,
         default : false
     }
   },{timestamp:true}
 );
 
-module.exports = mongoose.model('review', reviewSchema);
+module.exports = mongoose.model("review", reviewSchema);

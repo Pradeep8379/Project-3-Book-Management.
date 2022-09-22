@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel')
+const mongoose= require('mongoose')
 const jwt = require('jsonwebtoken');
-const { isValid, isValidEmail, isValidMobile, isValidName, isValidStreet, isValidTitle , isValidCity,isValidPincode} = require("../validation/validation");
+const { isValid, isValidEmail, isValidMobile, isValidName, isValidStreet,isValidTitle ,isValidCity,isValidPincode, isValidPassword} = require("../validation/validation");
 
 
 const createUser = async function (req, res) {
@@ -10,6 +11,7 @@ const createUser = async function (req, res) {
         //using destructuring
         
         const { title, name, phone, email, address, password } = data;
+        // data["title"]=data["title"].trim() 
 
         if (Object.keys(data).length == 0) {
             return res
@@ -17,7 +19,14 @@ const createUser = async function (req, res) {
                 .send({ status: false, message: "Data is required for creating user..." })
         };
 
+        if (!title) {
+            return res
+                .status(400)
+                .send({ status: false, message: "title is mandatory" })
+        };
+
         if (!isValidTitle(title.trim())) {
+            // console.log("hi")
             return res
                 .status(400)
                 .send({ status: false, message: "Please Enter Mr,Miss or Mrs..." })
@@ -139,6 +148,28 @@ const userLogin = async (req, res) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
+
+        if (Object.keys(req.body).length == 0) {
+            return res
+                .status(400)
+                .send({ status: false, message: "both email id and password is required" })
+        };
+
+        if (!email) {
+            return res.status(400).send({ status: false, message: "email id is required " });
+        }
+
+        if(isValidEmail(email)){
+            return res.status(400).send({ status: false, message: "email id is invalid " })
+        }
+
+        if(!password){
+            return res.status(400).send({ status: false, message: "password is required " });
+        }
+
+        if(isValidPassword(password)){
+            return res.status(400).send({ status: false, message: "password is invalid " })
+        }
 
         let checkData = await userModel.findOne({ email: email, password: password });
         if (!checkData) return res.status(400).send({ status: false, msg: "This email and password is not exist" });

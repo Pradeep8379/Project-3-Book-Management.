@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const objId =  mongoose.Schema.Types.ObjectId;
 
 const reviewSchema = new mongoose.Schema({

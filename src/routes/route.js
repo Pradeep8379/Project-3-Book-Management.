@@ -1,28 +1,28 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userController = require('../controllers/userController')
-const bookController = require('../controllers/bookController')
+const userController = require("../controllers/userController");
+const bookController = require("../controllers/bookController");
+const commonMW = require("../middleware/auth");
 
+router.post("/register", userController.createUser);
 
+router.post("/login", userController.userLogin);
 
-router.post('/register', userController.createUser)
+router.post("/books", commonMW.authenticate, bookController.createBook);
 
-router.post('/login', userController.userLogin)
+router.get("/books", commonMW.authenticate, bookController.getBooks);
 
-router.post('/books', bookController.createBook)
+router.get("/books/:bookId", commonMW.authenticate, bookController.getBookById);
 
-router.get('/books', bookController.getBooks);
+router.put("/books/:bookId", commonMW.authenticate, bookController.updateBooks);
 
-router.get('/books/:bookId', bookController.getBookById)
+router.delete("/books/:bookId",commonMW.authenticate, bookController.deleteBook);
 
+// router.all("/*", function (req, res) {
+//   res.status(400).send({
+//     status: false,
+//     message: "The api you request is not available",
+//   });
+// });
 
-router.all("/*", function (req, res) {
-    res.status(400).send({
-        status: false,
-        message: "The api you request is not available"
-    })
-})
-
-
-
-module.exports = router
+module.exports = router;

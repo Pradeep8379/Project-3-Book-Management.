@@ -1,10 +1,21 @@
 const mongoose = require("mongoose");
 
 const isValid = function (value) {
-  if (typeof value === null) return false;
-  if (typeof value === "string" && value.trim().length > 0) return true;
+  if (typeof (value) === null) return false;
+  if (typeof (value) === "string" && value.trim().length > 0) return true;
   return false;
 };
+
+// const isvalidRating = function (rating) {
+//     if (typeof rating === null) return false;
+//     if(typeof rating != "number" ) return false;
+//     if(rating < 1 || rating > 5) return false
+//     return true
+// }
+
+const isValidRating=function(value){
+    return /^[1-5]$/.test(value)
+}
 
 const isValidTitle = function (title) {
   return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1;
@@ -50,8 +61,8 @@ const isValidISBN = function (isbn) {
   return false;
 };
 
-const isValidId = function (id) {
-  return mongoose.Types.ObjectId.isValid(id);
+const isValidId = function (objectId) {
+  return mongoose.Types.ObjectId.isValid(objectId);
 };
 
 const isValidReleasedAt = (releasedAt) => {
@@ -61,12 +72,13 @@ const isValidReleasedAt = (releasedAt) => {
 
 module.exports = {
   isValid,
+  isValidRating,
+  isValidTitle,
   isValidEmail,
   isValidMobile,
+  isValidPassword,
   isValidName,
   isValidStreet,
-  isValidTitle,
-  isValidPassword,
   isValidCity,
   isValidPincode,
   isValidISBN,

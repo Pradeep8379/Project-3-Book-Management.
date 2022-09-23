@@ -34,7 +34,7 @@ const createBook = async function (req, res) {
         status: false,
         message: "title is required and should be a valid format",
       });
-      
+
     let checkTitle = await bookModel.findOne({ title: title });
     if (checkTitle)
       return res
@@ -149,6 +149,7 @@ const getBooks = async function (req, res) {
           .status(404)
           .send({ status: false, message: "No Books Found..." });
       }
+    
       // let sortedBooks = books.sort((a, b) => (a.name > b.name ? 1 : -1))
       return res
         .status(200)
@@ -185,7 +186,7 @@ const getBooks = async function (req, res) {
         reviews: 1,
       })
       .sort({ title: 1 });
-    if (Object.keys(bookList) == 0) {
+    if (Object.keys(bookList).length == 0) {
       return res
         .status(400)
         .send({ status: false, message: "Book Not Found..." });

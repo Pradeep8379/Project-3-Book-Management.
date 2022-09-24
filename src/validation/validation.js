@@ -22,7 +22,7 @@ const isValidTitle = function (title) {
 };
 
 const isValidEmail = function (email) {
-  const emailRegex = /^[a-z0-9_]{3,}@[a-z]{3,}.[a-z]{3,6}$/;
+  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return emailRegex.test(email);
 };
 
@@ -61,6 +61,11 @@ const isValidISBN = function (isbn) {
   return false;
 };
 
+// const isValidISBN = function (isbn) {
+//     if (!/^(97(8|9))?\d{9}(\d|X)$/.test(ISBN.split("-").join(""))) return true;
+//     return false;
+//   };
+  
 const isValidId = function (objectId) {
   return mongoose.Types.ObjectId.isValid(objectId);
 };

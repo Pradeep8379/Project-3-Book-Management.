@@ -22,12 +22,10 @@ const createUser = async function (req, res) {
     // data["title"]=data["title"].trim()
 
     if (Object.keys(data).length == 0) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Data is required for creating user...",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Data is required for creating user...",
+      });
     }
 
     if (!title) {
@@ -50,12 +48,23 @@ const createUser = async function (req, res) {
     }
 
     if (!isValid(name.trim()) || !isValidName(name.trim())) {
+      return res.status(400).send({
+        status: false,
+        message: "name is required or its should contain aplhabets..",
+      });
+    }
+
+    if (!phone) {
       return res
         .status(400)
-        .send({
-          status: false,
-          message: "name is required or its should contain aplhabets..",
-        });
+        .send({ status: false, message: "mobile number is mandatory..." });
+    }
+
+    if (!isValidMobile(phone)) {
+      return res.status(400).send({
+        status: false,
+        message: "please enter valid mobile number...",
+      });
     }
 
     if (!email) {
@@ -75,21 +84,6 @@ const createUser = async function (req, res) {
       return res.status(400).send({ message: "Email Already Registered..." });
     }
 
-    if (!phone) {
-      return res
-        .status(400)
-        .send({ status: false, message: "mobile number is mandatory..." });
-    }
-
-    if (!isValidMobile(phone.trim())) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "please enter valid mobile number...",
-        });
-    }
-
     if (!password) {
       return res
         .status(400)
@@ -99,7 +93,7 @@ const createUser = async function (req, res) {
     if (!(password.length < 16) || !(password.length > 7)) {
       return res
         .status(400)
-        .send({ status: false, message: "invalid password....." });
+        .send({ status: false, message: "password length should be from 8 to 15 ....." });
     }
 
     let checkMobile = await userModel.findOne({ phone: phone });
@@ -107,37 +101,37 @@ const createUser = async function (req, res) {
       return res.status(400).send({ message: "Mobile Already Registered" });
     }
 
-    if (!address.street) {
-      return res
-        .status(400)
-        .send({ status: false, message: "street is mandatory..." });
-    }
+    // if (!address.street) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "street is mandatory..." });
+    // }
 
-    if (!isValidStreet(address.street)) {
+    if (address.street && !isValidStreet(address.street)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid street..." });
     }
 
-    if (!address.city) {
-      return res
-        .status(400)
-        .send({ status: false, message: "city is mandatory..." });
-    }
+    // if (!address.city) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "city is mandatory..." });
+    // }
 
-    if (!isValidCity(address.city)) {
+    if (address.city && !isValidCity(address.city)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid city..." });
     }
 
-    if (!address.pincode) {
-      return res
-        .status(400)
-        .send({ status: false, message: "pincode is mandatory..." });
-    }
+    // if (!address.pincode) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "pincode is mandatory..." });
+    // }
 
-    if (!isValidPincode(address.pincode)) {
+    if (address.pincode && !isValidPincode(address.pincode)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid pincode..." });
@@ -145,13 +139,11 @@ const createUser = async function (req, res) {
 
     const newUser = await userModel.create(data);
 
-    return res
-      .status(201)
-      .send({
-        status: true,
-        message: " user created successfully",
-        data: newUser,
-      });
+    return res.status(201).send({
+      status: true,
+      message: " user created successfully",
+      data: newUser,
+    });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
@@ -163,12 +155,10 @@ const userLogin = async (req, res) => {
     const password = req.body.password;
 
     if (Object.keys(req.body).length == 0) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "both email id and password is required",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "both email id and password is required",
+      });
     }
 
     if (!email) {
@@ -199,6 +189,7 @@ const userLogin = async (req, res) => {
       email: email,
       password: password,
     });
+    
     if (!checkData)
       return res
         .status(400)
@@ -214,14 +205,15 @@ const userLogin = async (req, res) => {
       expiresIn
     );
 
-    res
-      .status(200)
-      .send({
-        status: true,
-        msg: "user Login Successful",
-        token,
-        expiresIn: expiresIn.expiresIn,
-      });
+    res.status(200).send({
+      status: true,
+      message: "user Login Successful",
+      data:token,
+      userId:checkData._id,
+      iat:new Date(),
+      expiresIn: expiresIn.expiresIn,
+    });
+
   } catch (err) {
     res.status(500).send({ msg: err.message });
   }

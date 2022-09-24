@@ -59,13 +59,11 @@ const postReview = async function (req, res) {
     }
     //    rating validation.
     if (!isValidRating(rating)) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          Message:
-            "Please Enter a Valid Rating Between 1 to 5 with No Decimal Places ...",
-        });
+      return res.status(400).send({
+        status: false,
+        Message:
+          "Please Enter a Valid Rating Between 1 to 5 with No Decimal Places ...",
+      });
     }
     // Name validation.
     if (reviewedBy) {
@@ -75,7 +73,7 @@ const postReview = async function (req, res) {
           .send({ status: false, Message: "Enter a Valid Name..." });
       }
       // adding reviewedBy
-      requestBody.reviewedBy = reviewedBy;
+      requestBody.reviewedBy = reviewedBy; 
     }
     // adding reviewedBy and bookId.
     requestBody.bookId = bookId;
@@ -83,27 +81,29 @@ const postReview = async function (req, res) {
     // creating review
     // const createReview = await reviewModel.create(requestBody)
     let createReview = await reviewModel.create(requestBody);
-    // const findReview =await reviewModel.findOne(createReview).select({updatedAt:0,createdAt:0,__v:0}).populate("bookId")
+    const findReview =await reviewModel.findOne(createReview).select({updatedAt:0,createdAt:0,__v:0}).populate("bookId")
     // createReview = JSON.parse(JSON.stringify(createReview));
-    ["createdAt","updatedAt","__v"].forEach((ele)=> delete createReview._doc[ele]);
-    
+    // ["createdAt", "updatedAt", "__v"].forEach(
+    //   (ele) => delete createReview._doc[ele]
+    // );
+
     // increasing reviews by 1.
     await bookModel.findOneAndUpdate(
       { _id: bookId, isDeleted: false },
       { $inc: { reviews: 1 } }
     );
 
-    return res
-      .status(201)
-      .send({
-        status: true,
-        Message: "Review Added successfully",
-        Data: createReview,
-      });
+    return res.status(201).send({
+      status: true,
+      message: "Review Added successfully",
+      data: findReview,
+    });
   } catch (error) {
     return res.status(500).send(error.message);
   }
 };
+
+
 
 
 
@@ -131,7 +131,7 @@ const updateReview = async function (req, res) {
       isDeleted: false,
     });
 
-    if (!findBookId || findBookId.isDeleted == true) {
+    if (!findBookId) {
       return res
         .status(404)
         .send({ status: false, message: "this bookId doesn't exists" });
@@ -154,9 +154,9 @@ const updateReview = async function (req, res) {
       isDeleted: false,
     });
 
-    if (!findReviewId || findReviewId.isDeleted == true) {
+    if (!findReviewId) {
       return res
-        .send(404)
+        .status(404)
         .send({ status: false, message: "this reviewId doesn't exists" });
     }
 
@@ -167,20 +167,25 @@ const updateReview = async function (req, res) {
       });
     }
 
-    if((rating) && !isValidRating(rating)){
-        return res.status(400).send({status:false, message:"provide rating for updates"})
+    if (rating && !isValidRating(rating)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "provide rating for updates between 1 to 5" });
     }
 
-    if((reviewedBy) && !isValidName(reviewedBy)){
-        return res.status(400).send({status:false, message:"provide reviewBy for updates"})
-    }
-    
-    if((reviews) && !isValid(reviews)){
-        return res.status(400).send({status:false, message:"provide reviews for updates"})
+    if (reviewedBy && !isValidName(reviewedBy)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "provide reviewBy for updates" });
     }
 
+    if (reviews && !isValid(reviews)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "provide reviews for updates" });
+    }
 
-    const updateReviewData = await reviewModel.findOneAndUpdate(
+    const updateReviewData = await reviewModel.findByIdAndUpdate(
       { bookId: bookId, _id: reviewId, isDeleted: false },
       { $set: { reviews, rating, reviewedBy } },
       { new: true }
@@ -191,23 +196,36 @@ const updateReview = async function (req, res) {
       message: "updated successfully",
       data: updateReviewData,
     });
-
   } catch (error) {
     return res.status(500).send(error.message);
   }
 };
 
+
+
 const deleteReview = async function (req, res) {
   try {
     let bookId = req.params.bookId;
     let reviewId = req.params.reviewId;
+
+    if (!bookId) {
+      return res
+        .status(400)
+        .send({ status: false, message: "bookId is mandatory" });
+    }
     //bookId Validation
-    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+    if (!isValidId(bookId)) {
       return res.status(400).send({ status: false, msg: "bookId is invalid" });
     }
 
+    if (!reviewId) {
+      return res
+        .send(400)
+        .send({ status: false, message: "reviewId is mandatory" });
+    }
+
     // reviewId validation
-    if (!mongoose.Types.ObjectId.isValid(reviewId)) {
+    if (!isValidId(reviewId)) {
       return res
         .status(400)
         .send({ status: false, msg: "reviewId is invalid" });
@@ -218,7 +236,7 @@ const deleteReview = async function (req, res) {
       _id: bookId,
       isDeleted: false,
     });
-    if (!bookDetails || bookDetails["isDeleted"] == true) {
+    if (!bookDetails ) {
       return res.status(400).send({ status: false, msg: "Book not found " });
     }
 
@@ -227,7 +245,7 @@ const deleteReview = async function (req, res) {
       _id: reviewId,
       isDeleted: false,
     });
-    if (!reviewDetails || reviewDetails["isDeleted"] == true) {
+    if (!reviewDetails ) {
       return res.status(400).send({ status: false, msg: "Review not found " });
     }
 
@@ -235,11 +253,14 @@ const deleteReview = async function (req, res) {
     let deleteReview = await reviewModel.updateOne({
       $set: { isDeleted: true },
     });
+
+    await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $inc: { reviews: -1 } });
     res.status(200).send({
       status: true,
       message: "deleted successfully",
       data: deleteReview,
     });
+
   } catch (error) {
     return res.status(500).send(error.message);
   }

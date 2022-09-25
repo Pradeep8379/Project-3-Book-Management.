@@ -1,7 +1,6 @@
 const bookModel = require("../models/bookModel");
 const userModel = require("../models/userModel");
 const reviewModel = require("../models/reviewModel");
-const mongoose = require("mongoose");
 const {
   isValidName,
   isValid,
@@ -10,14 +9,14 @@ const {
   isValidReleasedAt,
 } = require("../validation/validation");
 
-
 // ========================================================CREATE A BOOK================================================================//
 const createBook = async function (req, res) {
   try {
     let data = req.body;
 
     // destructuring.
-    const { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data;
+    const { title, excerpt, userId, ISBN, category, subcategory, releasedAt } =
+      data;
 
     // checking request body.
     if (Object.keys(data).length == 0) {
@@ -132,12 +131,11 @@ const createBook = async function (req, res) {
     return res
       .status(201)
       .send({ status: true, message: "Sucessfully created", data: savedData });
-
+      
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
-
 
 // =========================================================GET BOOKS====================================================================//
 const getBooks = async function (req, res) {
@@ -171,7 +169,7 @@ const getBooks = async function (req, res) {
         .send({ status: true, message: "Success", data: books });
     }
 
-    //    Destructuring
+    // Destructuring
     const { userId, category, subcategory, releasedAt, reviews } = data;
 
     // userId validation.
@@ -194,17 +192,15 @@ const getBooks = async function (req, res) {
     };
 
     // sorting books by title in ascending order.
-    let bookList = await bookModel
-      .find(filter)
-      .sort({ title: 1 })
-      .select({
-        title: 1,
-        excerpt: 1,
-        userId: 1,
-        category: 1,
-        releasedAt: 1,
-        reviews: 1,
-      });
+    let bookList = await bookModel.find(filter).sort({ title: 1 }).select({
+      title: 1,
+      excerpt: 1,
+      userId: 1,
+      category: 1,
+      releasedAt: 1,
+      reviews: 1,
+    });
+
     if (Object.keys(bookList).length == 0) {
       return res
         .status(404)
@@ -226,7 +222,7 @@ const getBookById = async function (req, res) {
     let bookId = req.params.bookId;
 
     // bookId validation.
-    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+    if (!isValidId(bookId)) {
       return res
         .status(400)
         .send({ status: false, message: `bookId ${bookId} is invalid` });
@@ -237,7 +233,6 @@ const getBookById = async function (req, res) {
       _id: bookId,
       isDeleted: false,
     });
-
 
     if (!getSpecificBooks) {
       return res
@@ -277,7 +272,7 @@ const updateBooks = async function (req, res) {
       });
     }
 
-    //bookId validation. 
+    //bookId validation.
     if (bookId && !isValidId(bookId)) {
       return res
         .status(400)
@@ -293,9 +288,7 @@ const updateBooks = async function (req, res) {
       .select({ userId: 1, _id: 0 });
 
     if (!validBookId) {
-      return res
-        .status(404)
-        .send({ status: false, message: "book not found" });
+      return res.status(404).send({ status: false, message: "book not found" });
     }
 
     // authorisation
@@ -304,8 +297,8 @@ const updateBooks = async function (req, res) {
         .status(403)
         .send({ status: false, message: "unauthorised user" });
     }
-    // authorisation if user id is present.
 
+    // authorisation if user id is present.
     if (userId && req.loginUserId != userId) {
       return res
         .status(403)
@@ -325,10 +318,12 @@ const updateBooks = async function (req, res) {
         status: false,
         message: "title  should be in valid format...",
       });
+
     let checkTitle = await bookModel.findOne({
       title: title,
       isDeleted: false,
     });
+
     if (checkTitle)
       return res
         .status(409)
@@ -362,7 +357,6 @@ const updateBooks = async function (req, res) {
       });
 
     //  adding keys to update.
-
     let updateBody = {};
 
     if (title) {
@@ -426,7 +420,6 @@ const deleteBook = async function (req, res) {
     let savedData = await bookModel.findById(bookId);
 
     //if it is already deleted
-
     if (savedData.isDeleted)
       return res.status(404).send({
         status: false,
@@ -439,12 +432,14 @@ const deleteBook = async function (req, res) {
       { $set: { isDeleted: true, deletedAt: new Date() } },
       { new: true }
     );
-    return res.status(200).send({ status: true, message: "deleted successfully" });
+
+    return res
+      .status(200)
+      .send({ status: true, message: "deleted successfully" });
 
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
   }
 };
-
 
 module.exports = { createBook, getBooks, getBookById, updateBooks, deleteBook };

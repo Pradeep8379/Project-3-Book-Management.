@@ -6,13 +6,6 @@ const isValid = function (value) {
   return false;
 };
 
-// const isvalidRating = function (rating) {
-//     if (typeof rating === null) return false;
-//     if(typeof rating != "number" ) return false;
-//     if(rating < 1 || rating > 5) return false
-//     return true
-// }
-
 const isValidRating=function(value){
     return /^[1-5]$/.test(value)
 }
@@ -30,11 +23,6 @@ const isValidMobile = function (number) {
   const mobileRegex = /^[5-9]{1}[0-9]{9}$/;
   return mobileRegex.test(number);
 };
-
-// const isValidPassword = function (password) {
-//   const passwordRegex = /^[a-zA-Z0-9]{8,15}$/;
-//   return passwordRegex.test(password);
-// };
 
 const isValidName = function (value) {
   const regex = /^[a-zA-Z]+([\s][a-zA-Z]+)*$/;
@@ -61,17 +49,11 @@ const isValidISBN = function (isbn) {
   return false;
 };
 
-// const isValidISBN = function (isbn) {
-//     if (!/^(97(8|9))?\d{9}(\d|X)$/.test(ISBN.split("-").join(""))) return true;
-//     return false;
-//   };
-  
 const isValidId = function (objectId) {
   return mongoose.Types.ObjectId.isValid(objectId);
 };
 
 const isValidReleasedAt = (releasedAt) => {
-  // return /^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$/.test(releasedAt);
   return /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(releasedAt);
 };
 
@@ -81,12 +63,11 @@ module.exports = {
   isValidTitle,
   isValidEmail,
   isValidMobile,
-  
   isValidName,
   isValidStreet,
   isValidCity,
   isValidPincode,
   isValidISBN,
   isValidId,
-  isValidReleasedAt,
+  isValidReleasedAt
 };

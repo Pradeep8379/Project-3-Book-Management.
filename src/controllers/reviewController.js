@@ -31,6 +31,7 @@ const postReview = async function (req, res) {
                 _id: bookId,
                 isDeleted: false,
             });
+
             if (!noBookId) {
                 return res
                     .status(400)
@@ -109,6 +110,7 @@ const postReview = async function (req, res) {
     }
 };
 
+
 // ====================================================UPDATE A REVIEW==================================//
 const updateReview = async function (req, res) {
     try {
@@ -156,6 +158,7 @@ const updateReview = async function (req, res) {
                 .status(400)
                 .send({ status: false, message: `${reviewId} is not valid review Id` });
         }
+
         // checking if review is present or not.
         const findReviewId = await reviewModel.findOne({
             _id: reviewId,
@@ -215,6 +218,7 @@ const updateReview = async function (req, res) {
     }
 };
 
+
 // ========================================================DELETING A REVIEW=================================//
 const deleteReview = async function (req, res) {
     try {
@@ -260,6 +264,7 @@ const deleteReview = async function (req, res) {
             _id: reviewId,
             isDeleted: false,
         });
+        
         if (!reviewDetails) {
             return res.status(404).send({ status: false, msg: "Review not found " });
         }

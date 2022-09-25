@@ -136,7 +136,7 @@ const createUser = async function (req, res) {
     return res.status(201).send({
       status: true,
       message: " user created successfully",
-      data: newUser,
+      data: newUser
     });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -172,7 +172,6 @@ const userLogin = async (req, res) => {
         .send({ status: false, message: "email id is invalid " });
     }
 
-
     // checking password mandatory  and valid.
     if (!password) {
       return res
@@ -185,7 +184,6 @@ const userLogin = async (req, res) => {
         .status(400)
         .send({ status: false, message: "password length should be from 8 to 15 ....." });
     }
-
 
     // checking credentials.
     let checkData = await userModel.findOne({

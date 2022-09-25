@@ -31,10 +31,10 @@ const isValidMobile = function (number) {
   return mobileRegex.test(number);
 };
 
-const isValidPassword = function (password) {
-  const passwordRegex = /^[a-zA-Z0-9]{8,15}$/;
-  return passwordRegex.test(password);
-};
+// const isValidPassword = function (password) {
+//   const passwordRegex = /^[a-zA-Z0-9]{8,15}$/;
+//   return passwordRegex.test(password);
+// };
 
 const isValidName = function (value) {
   const regex = /^[a-zA-Z]+([\s][a-zA-Z]+)*$/;
@@ -81,7 +81,7 @@ module.exports = {
   isValidTitle,
   isValidEmail,
   isValidMobile,
-  isValidPassword,
+  
   isValidName,
   isValidStreet,
   isValidCity,

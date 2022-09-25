@@ -112,7 +112,7 @@ const updateReview = async function (req, res) {
     const bookId = req.params.bookId;
     const reviewId = req.params.reviewId;
     const requestBody = req.body;
-    const { reviews, rating, reviewedBy } = requestBody;
+    const { review, rating, reviewedBy } = requestBody;
 
     if (!bookId) {
       return res
@@ -122,14 +122,15 @@ const updateReview = async function (req, res) {
 
     if (!isValidId(bookId)) {
       return res
-        .status(400)
+        .status(404)
         .send({ status: false, message: `${bookId} is not valid book Id` });
     }
 
-    const findBookId = await bookModel.findById({
+    const findBookId = await bookModel.findOne({
       _id: bookId,
       isDeleted: false,
     });
+    
 
     if (!findBookId) {
       return res
@@ -149,7 +150,7 @@ const updateReview = async function (req, res) {
         .send({ status: false, message: `${reviewId} is not valid review Id` });
     }
 
-    const findReviewId = await reviewModel.findById({
+    const findReviewId = await reviewModel.findOne({
       _id: reviewId,
       isDeleted: false,
     });
@@ -179,7 +180,7 @@ const updateReview = async function (req, res) {
         .send({ status: false, message: "provide reviewBy for updates" });
     }
 
-    if (reviews && !isValid(reviews)) {
+    if (review && !isValid(review)) {
       return res
         .status(400)
         .send({ status: false, message: "provide reviews for updates" });
@@ -187,7 +188,7 @@ const updateReview = async function (req, res) {
 
     const updateReviewData = await reviewModel.findByIdAndUpdate(
       { bookId: bookId, _id: reviewId, isDeleted: false },
-      { $set: { reviews, rating, reviewedBy } },
+      { $set: { review, rating, reviewedBy } },
       { new: true }
     );
 
@@ -237,7 +238,7 @@ const deleteReview = async function (req, res) {
       isDeleted: false,
     });
     if (!bookDetails ) {
-      return res.status(400).send({ status: false, msg: "Book not found " });
+      return res.status(404).send({ status: false, msg: "Book not found " });
     }
 
     // reviewId matching with review model and is deleted must be false
@@ -246,19 +247,18 @@ const deleteReview = async function (req, res) {
       isDeleted: false,
     });
     if (!reviewDetails ) {
-      return res.status(400).send({ status: false, msg: "Review not found " });
+      return res.status(404).send({ status: false, msg: "Review not found " });
     }
 
     //update with is deleted key to  true
-    let deleteReview = await reviewModel.updateOne({
+     await reviewModel.updateOne({
       $set: { isDeleted: true },
     });
 
     await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $inc: { reviews: -1 } });
     res.status(200).send({
       status: true,
-      message: "deleted successfully",
-      data: deleteReview,
+      message: "deleted successfully"
     });
 
   } catch (error) {

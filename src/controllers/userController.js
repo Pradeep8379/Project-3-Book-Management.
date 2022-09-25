@@ -20,6 +20,7 @@ const createUser = async function (req, res) {
 
     const { title, name, phone, email, address, password } = data;
     // data["title"]=data["title"].trim()
+    data["email"]=data["email"].toLowerCase()
 
     if (Object.keys(data).length == 0) {
       return res.status(400).send({
@@ -179,11 +180,17 @@ const userLogin = async (req, res) => {
         .send({ status: false, message: "password is required " });
     }
 
-    if (!isValidPassword(password)) {
+    if (!(password.length < 16) || !(password.length > 7)) {
       return res
         .status(400)
-        .send({ status: false, message: "password is invalid " });
+        .send({ status: false, message: "password length should be from 8 to 15 ....." });
     }
+
+    // if (!isValidPassword(password)) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "password is invalid " });
+    // }
 
     let checkData = await userModel.findOne({
       email: email,

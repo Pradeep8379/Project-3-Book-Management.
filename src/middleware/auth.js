@@ -5,22 +5,20 @@ const jwt = require("jsonwebtoken")
 const authenticate = function (req, res, next) {
     try {
         const token = req.headers["x-api-key"]
+
+        // token validation.
         if (!token) {
             return res.status(400).send({ status: false, message: "token must be present" })
         }
         else {
-            jwt.verify(token, "project/booksManagementGroup7", function (err, data) {
+            jwt.verify(token, "project3", function (err, data) {
                 if (err) {
                     return res.status(400).send({ status: false, message: err.message })
                 }
                 else {
                     req.loginUserId = data.userId
-                    if (data.exp > Date.now()) {
-                        next()
-                    }
-                    else {
-                        return res.status(401).send({ status: false, message: "token has been expired" })
-                    }
+                    next()
+
                 }
             })
         }

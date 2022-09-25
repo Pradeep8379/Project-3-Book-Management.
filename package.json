@@ -11,14 +11,13 @@
     "type": "git",
     "url": "git+https://github.com/pankajkandpal20/Book-Management.git"
   },
-  "author": "",
+  "author": "tanmay,pradeep,pankaj,manpreet",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/pankajkandpal20/Book-Management/issues"
   },
   "homepage": "https://github.com/pankajkandpal20/Book-Management#readme",
   "dependencies": {
-    "body-parser": "^1.20.0",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.1",

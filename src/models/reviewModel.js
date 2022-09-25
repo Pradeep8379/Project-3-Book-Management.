@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const objId =  mongoose.Schema.Types.ObjectId;
 
 const reviewSchema = new mongoose.Schema({
@@ -29,7 +28,7 @@ const reviewSchema = new mongoose.Schema({
         type : Boolean,
         default : false
     }
-  },{timestamp:true}
+  },{timestamps:true}
 );
 
 module.exports = mongoose.model("review", reviewSchema);

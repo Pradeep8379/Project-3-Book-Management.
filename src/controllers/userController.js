@@ -109,23 +109,24 @@ const createUser = async function (req, res) {
       return res.status(409).send({ message: "Mobile Already Registered" });
     }
 
-
+     
     //  checking if street is valid or not.
-    if (address.street && !isValidStreet(address.street)) {
+
+    if (address && address.street && !isValidStreet(address.street)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid street..." });
     }
 
     //  checking if city is valid or not.
-    if (address.city && !isValidCity(address.city)) {
+    if (address && address.city && !isValidCity(address.city)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid city..." });
     }
 
     //  checking if pincode is valid or not.
-    if (address.pincode && !isValidPincode(address.pincode)) {
+    if (address && address.pincode && !isValidPincode(address.pincode)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid pincode..." });
